@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>DHA Multan Sector B2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://unpkg.com/leaflet@latest/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@latest/dist/leaflet.css" />
+  <link rel="stylesheet" href="Control.FullScreen.css" />
+  <link rel="stylesheet" href="Leaflet.PolylineMeasure.css">
+  <script src="Leaflet.PolylineMeasure.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.js" integrity="sha384-N2S8y7hRzXUPiepaSiUvBH1ZZ7Tc/ZfchhbPdvOE5v3aBBCIepq9l+dBJPFdo1ZJ" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/gokertanrisever/leaflet-ruler@master/src/leaflet-ruler.css" integrity="sha384-P9DABSdtEY/XDbEInD3q+PlL+BjqPCXGcF8EkhtKSfSTr/dS5PBKa9+/PMkW2xsY" crossorigin="anonymous">  
+  <link rel="stylesheet" href="index.css">
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-locatecontrol/0.79.0/L.Control.Locate.min.js"
+    charset="utf-8"></script>
+
+  <script src="Control.FullScreen.js"></script>
+</head>
+
+<body>
+  <script src="leaflet-hash.js"></script>
+  <script src="Autolinker.min.js"></script>
+  <div id="map">
+    <button id="geolocate" onclick="geolocateControl()"></button>
+  </div>
+
+  <div id="transparency">
+    <label for="opacity"></label>
+    <input type="range" min="0" max="1" step="0.1" value="1" id="opacity">
+  </div>
+
+  <script>
+
+    var map = L.map("map", {
+      tap: false,
+      fullscreenControl: true,
+      locateControl: true,
+      fullscreenControlOptions: {
+
+        title: "Show me the fullscreen !",
+        titleCancel: "Exit fullscreen mode",
+      },
+    }).setView([30.294743, 71.528123], 16);
+
+    var tiles = L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+      maxZoom: 24,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    }).addTo(map);
+
+    var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://zameenlocator.com">Zameen Locator</a>');
+        var autolinker = new Autolinker({
+            truncate: {
+                length: 30,
+                location: 'smart'
+            }
+        });
+       
+      var ctlMeasure = L.control.polylineMeasure().addTo(map);
+
+        var title = new L.Control();
+        title.onAdd = function(map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function() {
+            this._div.innerHTML = '<h3>DHA Multan Sector B2</h3>';
+        };
+        title.addTo(map);
+
+    var layer1 = L.tileLayer('./tiles/{z}/{x}/{y}.png', {
+      maxZoom: 24,
+      opacity: 1
+    }).addTo(map);
+
+    function geolocateControl() {
+      map.locate({ setView: true, enableHighAccuracy: true, watch: true });
+    }
+
+    map.on("enterFullscreen", function () {
+      if (window.console) window.console.log("enterFullscreen");
+    });
+    map.on("exitFullscreen", function () {
+      if (window.console) window.console.log("exitFullscreen");
+    });
+
+    var baseLayers = {
+      'Google Earth': tiles
+    };
+
+    var overlays = {
+      'DHA Multan Sector B2': layer1
+    };
+
+    L.control.layers(baseLayers, overlays).addTo(map);
+
+    document.getElementById('opacity').addEventListener('input', function (e) {
+      var opacityValue = e.target.value;
+      layer1.setOpacity(opacityValue);
+    });
+
+    var ruler = L.control.ruler();
+    ruler.addTo(map);
+
+  </script>
+</body>
+
+</html>
